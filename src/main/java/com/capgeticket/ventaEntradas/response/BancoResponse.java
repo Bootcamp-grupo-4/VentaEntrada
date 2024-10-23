@@ -13,5 +13,5 @@ public class BancoResponse {
     private String error;
     private List<String> message;
     private BancoDto info;
-    private String infoAdicional;
+    private String infoadicional;
 }
