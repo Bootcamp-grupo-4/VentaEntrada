@@ -1,4 +1,4 @@
-package com.capgeticket.VentaEntradas.exception;
+package com.capgeticket.ventaEntradas.exception;
 
 
 import org.slf4j.Logger;
@@ -22,8 +22,23 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     private static final Logger logger = LoggerFactory.getLogger(CustomGlobalExceptionHandler.class);
 
-    // Manejo de la excepción
-    /*
+    // Manejo de la excepción de el banco rechazando el pago
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BancoRejectedException.class)
+    public ResponseEntity<Object> handleBancoRejectedException(BancoRejectedException ex, WebRequest request) {
+        logger.info("Manejando BancoRejectedException: {}", ex.getMessage());
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("error", "Evento no encontrado");
+        body.put("message", ex.getMessage());
+        body.put("path", request.getDescription(false));
+
+        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    // Manejo de la excepción EventoNotFoundException
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EventoNotFoundException.class)
     public ResponseEntity<Object> handleEventoNotFound(EventoNotFoundException ex, WebRequest request) {
@@ -37,7 +52,23 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("path", request.getDescription(false));
 
         return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
-    }*/
+    }
+
+    // Manejo de la excepción para respuesta 500 del banco
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InestableBankException.class)
+    public ResponseEntity<Object> handleBancoRejectedException(InestableBankException ex, WebRequest request) {
+        logger.info("Manejando InestableBankException: {}", ex.getMessage());
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("error", "Evento no encontrado");
+        body.put("message", ex.getMessage());
+        body.put("path", request.getDescription(false));
+
+        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
 
     // Manejo de la excepción IllegalArgumentException
     @ResponseStatus(HttpStatus.BAD_REQUEST)

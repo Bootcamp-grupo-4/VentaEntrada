@@ -1,9 +1,11 @@
-package com.capgeticket.VentaEntradas.controller;
+package com.capgeticket.ventaEntradas.controller;
 
-import com.capgeticket.VentaEntradas.dto.VentaEntradasDto;
-import com.capgeticket.VentaEntradas.service.VentaEntradasService;
+import com.capgeticket.ventaEntradas.dto.VentaEntradasDto;
+import com.capgeticket.ventaEntradas.response.VentaEntradasResponseDto;
+import com.capgeticket.ventaEntradas.service.VentaEntradasService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,23 +15,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.logging.Logger;
-
 @RestController
 @RequestMapping("/compra")
 @Tag(name="Compra", description = "Api compra")
-@Slf4j
 public class VentaEntradasController {
+
+    private static final Logger logger = LoggerFactory.getLogger(VentaEntradasController.class);
 
     @Autowired
     private VentaEntradasService ventaEntradasService;
 
     @PostMapping
-    public ResponseEntity<VentaEntradasDto> comprarEntrada(@RequestBody VentaEntradasDto ventaEntradasDto) {
+    public ResponseEntity<VentaEntradasResponseDto> comprarEntrada(@RequestBody @Valid VentaEntradasDto ventaEntradasDto) {
         if(ventaEntradasDto == null) {
             throw new IllegalArgumentException("VentaEntradasDto cannot be null");
         }
-        VentaEntradasDto compra = ventaEntradasService.compra(ventaEntradasDto);
+        VentaEntradasResponseDto compra = ventaEntradasService.compra(ventaEntradasDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(compra);
     }
 

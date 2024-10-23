@@ -1,4 +1,4 @@
-package com.capgeticket.VentaEntradas.model;
+package com.capgeticket.ventaEntradas.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -43,7 +43,7 @@ public class Evento {
     @Column(name = "mostrar", nullable = false)
     private Boolean mostrar;
 
-    @OneToMany(mappedBy = "ventaEntrada")
+    @OneToMany(mappedBy = "evento")
     private Set<VentaEntrada> ventaEntradas;
 
 }

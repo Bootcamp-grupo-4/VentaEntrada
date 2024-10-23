@@ -1,9 +1,10 @@
-package com.capgeticket.VentaEntradas.model;
+package com.capgeticket.ventaEntradas.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -25,11 +26,11 @@ public class VentaEntrada {
     @Column(name = "numeroTarjeta", nullable = false, length = 255)
     private String numeroTarjeta;
 
-    @Column(name = "mesCaducidad", nullable = false, precision = 10, scale = 2)
-    private BigDecimal mesCaducidad;
+    @Column(name = "mesCaducidad", nullable = false)
+    private Integer mesCaducidad;
 
-    @Column(name = "yearCaducidad", nullable = false, precision = 10, scale = 2)
-    private BigDecimal yearCaducidad;
+    @Column(name = "yearCaducidad", nullable = false)
+    private Integer yearCaducidad;
 
     @Column(name = "concepto", nullable = false, length = 255)
     private String concepto;
@@ -38,6 +39,6 @@ public class VentaEntrada {
     private BigDecimal cantidad;
 
     @Column(name = "fechaCompra")
-    private Date fechaCompra;
+    private LocalDateTime fechaCompra;
 
 }
