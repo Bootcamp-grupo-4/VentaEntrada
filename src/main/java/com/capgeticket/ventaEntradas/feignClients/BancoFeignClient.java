@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name="banco", url="http://banco.eu-west-3.elasticbeanstalk.com/")
 public interface BancoFeignClient {
 
-    @PostMapping("/banco/")
+    @PostMapping("/pasarela/compra")
     public ResponseEntity<BancoResponse> pay(@RequestBody BancoDto body);
 }
