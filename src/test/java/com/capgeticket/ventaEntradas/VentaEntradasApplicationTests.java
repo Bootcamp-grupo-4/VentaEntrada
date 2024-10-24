@@ -1,15 +1,21 @@
 package com.capgeticket.ventaEntradas;
 
 import com.capgeticket.ventaEntradas.controller.VentaEntradasController;
+import com.capgeticket.ventaEntradas.dto.BancoDto;
 import com.capgeticket.ventaEntradas.dto.EventoDto;
 import com.capgeticket.ventaEntradas.dto.VentaEntradasDto;
+import com.capgeticket.ventaEntradas.exception.BancoRejectedException;
 import com.capgeticket.ventaEntradas.exception.EventoNotFoundException;
+import com.capgeticket.ventaEntradas.exception.InestableBankException;
 import com.capgeticket.ventaEntradas.feignClients.BancoFeignClient;
 import com.capgeticket.ventaEntradas.feignClients.EventoFeignClient;
 import com.capgeticket.ventaEntradas.repository.VentaEntradasRepository;
+import com.capgeticket.ventaEntradas.response.BancoResponse;
+import com.capgeticket.ventaEntradas.response.VentaEntradasResponseDto;
 import com.capgeticket.ventaEntradas.service.VentaEntradasService;
 import com.capgeticket.ventaEntradas.service.VentaEntradasServiceImpl;
 import feign.FeignException;
+import feign.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,7 +47,7 @@ class VentaEntradasApplicationTests {
 	@MockBean
 	private VentaEntradasService service;
 
-	@Autowired
+	@InjectMocks
 	private VentaEntradasServiceImpl serviceImpl;
 
 	@MockBean
@@ -54,12 +66,37 @@ class VentaEntradasApplicationTests {
 
 	@Test
 	void testValidCompra() {
-
+		BancoDto dto = new BancoDto();
+		BancoResponse b = new BancoResponse("timestamp", "200", "",List.of("Compra valida"), dto, "");
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		ResponseEntity<BancoResponse> banco = new ResponseEntity<BancoResponse>(b, HttpStatus.OK);
+		when(bancoFeignClient.pay(dto)).thenReturn(banco);
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		VentaEntradasResponseDto respuesta = serviceImpl.compra(venta);
+		assertEquals("Venta confirmada", respuesta.getMensaje());
 	}
 
 	@Test
-	void testInvalidCompra() {
+	void testInvalidCompraNullEvento() {
+		VentaEntradasDto venta = new VentaEntradasDto();
+		assertThrows(IllegalArgumentException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+	}
 
+	@Test
+	void testInvalidCompraNullEventoId() {
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			serviceImpl.compra(venta);
+		});
 	}
 
 	@Test
@@ -77,47 +114,173 @@ class VentaEntradasApplicationTests {
 
 	@Test
 	void testValidCompraWithBankError400NoFunds() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No funds"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError400NoClient() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No Client"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError400InvalidCard() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("Invalid Card"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError400InvalidCCV() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No CVV"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError400InvalidMonth() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No Month"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError400InvalidYear() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No year"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError400InvalidDate() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No date"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError400InvalidName() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No name"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new BancoRejectedException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 	@Test
 	void testValidCompraWithBankError500() {
-
+		EventoDto eve = new EventoDto(1L, "Evento","Descripcion", LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, "localidad", "nombreRecinto", "genero",true);
+		ResponseEntity<EventoDto> evento = new ResponseEntity<>(eve,HttpStatus.OK);
+		when(eventoFeignClient.getEventoById(1L)).thenReturn(evento);
+		BancoResponse b = new BancoResponse();
+		b.setMessage(List.of("No name"));
+		BancoDto banco = new BancoDto();
+		when(bancoFeignClient.pay(banco)).thenThrow(new InestableBankException(b));
+		VentaEntradasDto venta = new VentaEntradasDto();
+		EventoDto e = new EventoDto();
+		e.setId(1L);
+		venta.setEvento(e);
+		InestableBankException thrown = assertThrows(InestableBankException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals(String.join(", ", b.getMessage()), thrown.getMessage());
 	}
 
 

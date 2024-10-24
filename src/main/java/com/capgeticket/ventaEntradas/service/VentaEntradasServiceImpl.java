@@ -71,7 +71,12 @@ public class VentaEntradasServiceImpl implements VentaEntradasService{
     }
 
     private void validarEntrada(VentaEntradasDto ventaEntradasDto) {
-
+        if(ventaEntradasDto.getEvento() == null) {
+            throw new IllegalArgumentException("El evento no puede estar vacio");
+        }
+        if(ventaEntradasDto.getEvento().getId() == null) {
+            throw new IllegalArgumentException("El no puede ser nula");
+        }
     }
 
 
