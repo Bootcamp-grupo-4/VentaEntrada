@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name="ventaEntrada")
+@Table(name="ventaentrada")
 public class VentaEntrada {
 
     @Id
@@ -20,16 +20,16 @@ public class VentaEntrada {
     @JoinColumn(name = "id_evento")
     private Evento evento;
 
-    @Column(name = "nombreTitular", nullable = false, length = 255)
+    @Column(name = "nombretitular", nullable = false, length = 255)
     private String nombreTitular;
 
-    @Column(name = "numeroTarjeta", nullable = false, length = 255)
+    @Column(name = "numerotarjeta", nullable = false, length = 255)
     private String numeroTarjeta;
 
-    @Column(name = "mesCaducidad", nullable = false)
+    @Column(name = "mescaducidad", nullable = false)
     private Integer mesCaducidad;
 
-    @Column(name = "yearCaducidad", nullable = false)
+    @Column(name = "yearcaducidad", nullable = false)
     private Integer yearCaducidad;
 
     @Column(name = "concepto", nullable = false, length = 255)
@@ -38,7 +38,7 @@ public class VentaEntrada {
     @Column(name = "cantidad", nullable = false, precision = 10, scale = 2)
     private BigDecimal cantidad;
 
-    @Column(name = "fechaCompra")
+    @Column(name = "fechacompra")
     private LocalDateTime fechaCompra;
 
 }

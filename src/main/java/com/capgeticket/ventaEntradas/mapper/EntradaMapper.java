@@ -10,6 +10,7 @@ public class EntradaMapper {
 
     public static VentaEntradasDto ventaDtoMapper(VentaEntrada venta) {
         VentaEntradasDto ret = new VentaEntradasDto();
+        ret.setId(venta.getId());
         ret.setEvento(EventoMapper.eventoDtoMapper(venta.getEvento()));
         ret.setNombreTitular(venta.getNombreTitular());
         ret.setNumeroTarjeta(venta.getNumeroTarjeta());

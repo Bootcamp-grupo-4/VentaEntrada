@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/compra")
+@RequestMapping("/ventaentradas")
 @Tag(name="Compra", description = "Api compra")
 public class VentaEntradasController {
 
