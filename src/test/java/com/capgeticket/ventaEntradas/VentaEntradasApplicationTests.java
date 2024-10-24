@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -63,12 +64,15 @@ class VentaEntradasApplicationTests {
 
 	@Test
 	void testValidCompraWithNonExistenEvento() {
+		when(eventoFeignClient.getEventoById(1000L)).thenThrow(new EventoNotFoundException("Evento not found"));
 		VentaEntradasDto venta = new VentaEntradasDto();
 		EventoDto e = new EventoDto();
 		e.setId(1000L);
 		venta.setEvento(e);
-		when(eventoFeignClient.getEventoById(1000L)).thenThrow(FeignException.errorStatus("localhost:8081/evento/1000",null));
-		assertThrows(EventoNotFoundException.class, () -> serviceImpl.compra(venta));
+		EventoNotFoundException thrown = assertThrows(EventoNotFoundException.class, () -> {
+			serviceImpl.compra(venta);
+		});
+		assertEquals("Evento not found", thrown.getMessage());
 	}
 
 	@Test
