@@ -19,6 +19,7 @@ public class EntradaMapper {
         ret.setConcepto(venta.getConcepto());
         ret.setCantidad(venta.getCantidad());
         ret.setFechaCompra(LocalDateTime.now());
+        ret.setCorreoTitular(venta.getCorreoTitular());
         return ret;
     }
 
@@ -32,6 +33,7 @@ public class EntradaMapper {
         e.setConcepto(ventaEntradasDto.getConcepto());
         e.setCantidad(ventaEntradasDto.getCantidad());
         e.setFechaCompra(LocalDateTime.now());
+        e.setCorreoTitular(ventaEntradasDto.getCorreoTitular());
         return e;
     }
 }

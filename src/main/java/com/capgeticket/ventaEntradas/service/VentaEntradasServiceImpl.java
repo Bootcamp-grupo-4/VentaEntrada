@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Random;
+
 import static com.capgeticket.ventaEntradas.mapper.EntradaMapper.ventaDtoMapper;
 import static com.capgeticket.ventaEntradas.mapper.EntradaMapper.ventaMapper;
 import static com.capgeticket.ventaEntradas.mapper.EventoMapper.eventoMapper;
@@ -58,6 +61,12 @@ public class VentaEntradasServiceImpl implements VentaEntradasService{
             throw new IllegalArgumentException("Hubo un error con la busqueda del evento");
         }
 
+        BigDecimal min = evento.getBody().getPrecioMinimo();
+        BigDecimal max = evento.getBody().getPrecioMaximo();
+
+        ventaEntradasDto.setCantidad(BigDecimal.valueOf(min.doubleValue() + Math.random() * (max.doubleValue() - min.doubleValue())));
+        ventaEntradasDto.setConcepto(evento.getBody().getNombre() + " " + evento.getBody().getNombreDelRecinto());
+
         //Enviamos al banco la petición
         BancoDto banco = BancoDto.of(ventaEntradasDto);
         ResponseEntity<BancoResponse> bancoResponse = bancoResponse = bancoFeignClient.pay(banco);
@@ -78,7 +87,28 @@ public class VentaEntradasServiceImpl implements VentaEntradasService{
             throw new IllegalArgumentException("El evento no puede estar vacio");
         }
         if(ventaEntradasDto.getEvento().getId() == null) {
-            throw new IllegalArgumentException("El no puede ser nula");
+            throw new IllegalArgumentException("El id de evento no puede ser nulo");
+        }
+        if(ventaEntradasDto.getNombreTitular() == null || ventaEntradasDto.getNombreTitular().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de titular no puede ser nulo o vacio");
+        }
+        if(ventaEntradasDto.getCorreoTitular() == null || ventaEntradasDto.getCorreoTitular().trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo no puede ser nulo o vacio");
+        }
+        if(ventaEntradasDto.getNumeroTarjeta() == null || ventaEntradasDto.getNumeroTarjeta().trim().isEmpty()) {
+            throw new IllegalArgumentException("El numero de tarjeta no puede ser nulo o vacio");
+        }
+        if(ventaEntradasDto.getMesCaducidad() == null) {
+            throw new IllegalArgumentException("El mes de caducidad no puede ser nulo");
+        }
+        if(ventaEntradasDto.getYearCaducidad() == null) {
+            throw new IllegalArgumentException("El año de caducidad no puede ser nulo");
+        }
+        if(ventaEntradasDto.getCvv() == null) {
+            throw new IllegalArgumentException("El CVV no puede ser nulo");
+        }
+        if(ventaEntradasDto.getEmisor() == null || ventaEntradasDto.getEmisor().trim().isEmpty()) {
+            throw new IllegalArgumentException("El emisor no puede ser nulo o vacio");
         }
     }
 

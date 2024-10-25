@@ -4,9 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +15,8 @@ public class VentaEntradasDto {
     private Long id;
 
     private EventoDto evento;
+
+    private String correoTitular;
 
     private String nombreTitular;
 
@@ -36,7 +36,7 @@ public class VentaEntradasDto {
 
     private LocalDateTime fechaCompra;
 
-    public VentaEntradasDto(Long id, String nombreTitular, String numeroTarjeta, Integer mesCaducidad, Integer yearCaducidad, String concepto, BigDecimal cantidad, Integer cvv, String emisor, LocalDateTime fechaCompra) {
+    public VentaEntradasDto(Long id, String nombreTitular, String numeroTarjeta, Integer mesCaducidad, Integer yearCaducidad, String concepto, BigDecimal cantidad, Integer cvv, String emisor, LocalDateTime fechaCompra, String correoTitular) {
         this.id = id;
         this.nombreTitular = nombreTitular;
         this.numeroTarjeta = numeroTarjeta;
@@ -47,5 +47,6 @@ public class VentaEntradasDto {
         this.cvv = cvv;
         this.emisor = emisor;
         this.fechaCompra = fechaCompra;
+        this.correoTitular = correoTitular;
     }
 }

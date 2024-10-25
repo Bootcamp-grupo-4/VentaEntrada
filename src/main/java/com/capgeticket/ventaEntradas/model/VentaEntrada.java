@@ -23,6 +23,9 @@ public class VentaEntrada {
     @Column(name = "nombretitular", nullable = false, length = 255)
     private String nombreTitular;
 
+    @Column(name = "correotitular", nullable = false, length = 255)
+    private String correoTitular;
+
     @Column(name = "numerotarjeta", nullable = false, length = 255)
     private String numeroTarjeta;
 
