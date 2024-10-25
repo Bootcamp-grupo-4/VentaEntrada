@@ -27,24 +27,27 @@ public class CustomErrorDecoder implements ErrorDecoder {
             return new Exception(e.getMessage());
         }
         if(response.status() == 400) {
-            String err = resp.getError().toString();
+            String err = resp.getError();
+            System.out.println(err);
             String[] codeA = err.split(".");
-            if (err.equals("400.0001.Sin fondos")) {
-                return new BancoRejectedException("No tienes fondos en la cuenta, por favor recarga el saldo de tu cuenta");
-            } else if (err.equals("400.0002.Usuario no encontrado")) {
-                return new BancoRejectedException("No se han podido encontrar tus datos en el banco, revise los datos enviados");
-            } else if (err.equals("400.0003.Número de tarjeta no correcto")) {
-                return new BancoRejectedException("El número de tarjeta introducido no es correcto, revise los datos enviados");
+            if (err.startsWith("400.0001")) {
+                return new BancoRejectedException("0001", "No tienes fondos en la cuenta, por favor recarga el saldo de tu cuenta");
+            } else if (err.startsWith("400.0002")) {
+                return new BancoRejectedException("0002", "No se han podido encontrar tus datos en el banco, revise los datos enviados");
+            } else if (err.startsWith("400.0003")) {
+                return new BancoRejectedException("0003", "El número de tarjeta introducido no es correcto, revise los datos enviados");
             } else if (err.equals("400.0004.Número Cvv no correcto")) {
-                return new BancoRejectedException("El formato del CVV no es correcto, revise los datos enviados");
+                return new BancoRejectedException("0004", "El formato del CVV no es correcto, revise los datos enviados");
             } else if (err.equals("400.0005.Mes no correcto")) {
-                return new BancoRejectedException("El mes de caducidad no es correcto, revise los datos enviados");
+                return new BancoRejectedException("0005", "El mes de caducidad no es correcto, revise los datos enviados");
             } else if (err.equals("400.0006.Año no correcto")) {
-                return new BancoRejectedException("El año de caducidad no es correcto, revise los datos enviados");
+                return new BancoRejectedException("0006", "El año de caducidad no es correcto, revise los datos enviados");
             } else if (err.equals("400.0007.Fecha Caducidad no posterior")) {
-                return new BancoRejectedException("La fecha de caducidad introducida es anterior a hoy, revise los datos enviados");
+                return new BancoRejectedException("0007", "La fecha de caducidad introducida es anterior a hoy, revise los datos enviados");
             } else if (err.equals("400.0008.Nombre no correcto")) {
-                return new BancoRejectedException("El nombre introducido no es correcto, revise los datos enviados");
+                return new BancoRejectedException("0008", "El nombre introducido no es correcto, revise los datos enviados");
+            } else {
+                return new BancoRejectedException("Error desconocido, contacte con los administradores");
             }
         }
         if(response.status() == 500) {

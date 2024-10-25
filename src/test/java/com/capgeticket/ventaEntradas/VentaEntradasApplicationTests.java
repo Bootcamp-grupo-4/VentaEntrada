@@ -195,7 +195,7 @@ class VentaEntradasApplicationTests {
 		BancoRejectedException thrown = assertThrows(BancoRejectedException.class, () -> {
 			serviceImpl.compra(venta);
 		});
-		assertEquals("No year", thrown.getMessage());
+		assertEquals("No Year", thrown.getMessage());
 	}
 
 	@Test
