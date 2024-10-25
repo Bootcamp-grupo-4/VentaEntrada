@@ -18,7 +18,7 @@ public class BancoDto {
     private Integer cvv;
     private String emisor;
     private String concepto;
-    private BigDecimal cantidad;
+    private Double cantidad;
 
     public static BancoDto of(VentaEntradasDto ventaEntradasDto) {
         BancoDto bancoDto = new BancoDto();
@@ -29,7 +29,7 @@ public class BancoDto {
         bancoDto.cvv = ventaEntradasDto.getCvv();
         bancoDto.emisor = ventaEntradasDto.getEmisor();
         bancoDto.concepto = ventaEntradasDto.getConcepto();
-        bancoDto.cantidad = ventaEntradasDto.getCantidad();
+        bancoDto.cantidad = ventaEntradasDto.getCantidad().doubleValue();
         return bancoDto;
     }
 }

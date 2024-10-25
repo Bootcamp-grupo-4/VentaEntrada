@@ -31,7 +31,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
         body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", ex.getBancoResponse().getError());
+        body.put("error", ex.getMessage());
         body.put("message", ex.getMessage());
         body.put("path", request.getDescription(false));
 
@@ -63,7 +63,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
         body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", ex.getBancoResponse().getError());
+        body.put("error", ex.getMessage());
         body.put("message", ex.getMessage());
         body.put("path", request.getDescription(false));
 
