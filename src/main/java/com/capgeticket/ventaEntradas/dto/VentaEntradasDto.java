@@ -49,4 +49,15 @@ public class VentaEntradasDto {
         this.fechaCompra = fechaCompra;
         this.correoTitular = correoTitular;
     }
+
+    public VentaEntradasDto(EventoDto evento, String correoTitular, String nombreTitular, String numeroTarjeta, Integer mesCaducidad, Integer yearCaducidad, Integer cvv, String emisor) {
+        this.evento = evento;
+        this.correoTitular = correoTitular;
+        this.nombreTitular = nombreTitular;
+        this.numeroTarjeta = numeroTarjeta;
+        this.mesCaducidad = mesCaducidad;
+        this.yearCaducidad = yearCaducidad;
+        this.cvv = cvv;
+        this.emisor = emisor;
+    }
 }

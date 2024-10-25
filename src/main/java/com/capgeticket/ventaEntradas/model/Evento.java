@@ -1,7 +1,9 @@
 package com.capgeticket.ventaEntradas.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,6 +11,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "evento")
 public class Evento {
 
@@ -46,4 +49,16 @@ public class Evento {
     @OneToMany(mappedBy = "evento")
     private Set<VentaEntrada> ventaEntradas;
 
+    public Evento(Long id, String nombre, String descripcion, LocalDate fechaEvento, BigDecimal precioMinimo, BigDecimal precioMaximo, String localidad, String nombreDelRecinto, String genero, Boolean mostrar) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.fechaEvento = fechaEvento;
+        this.precioMinimo = precioMinimo;
+        this.precioMaximo = precioMaximo;
+        this.localidad = localidad;
+        this.nombreDelRecinto = nombreDelRecinto;
+        this.genero = genero;
+        this.mostrar = mostrar;
+    }
 }

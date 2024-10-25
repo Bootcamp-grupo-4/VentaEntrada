@@ -69,7 +69,7 @@ public class VentaEntradasServiceImpl implements VentaEntradasService{
 
         //Enviamos al banco la petición
         BancoDto banco = BancoDto.of(ventaEntradasDto);
-        ResponseEntity<BancoResponse> bancoResponse = bancoResponse = bancoFeignClient.pay(banco);
+        ResponseEntity<BancoResponse> bancoResponse = bancoFeignClient.pay(banco);
         //Si es correcta guardamos
         VentaEntrada venta = ventaMapper(ventaEntradasDto, eventoMapper(evento.getBody()));
         venta = ventaEntradasRepository.save(venta);
