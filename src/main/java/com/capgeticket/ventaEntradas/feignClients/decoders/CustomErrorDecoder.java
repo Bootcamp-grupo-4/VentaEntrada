@@ -36,15 +36,15 @@ public class CustomErrorDecoder implements ErrorDecoder {
                 return new BancoRejectedException("0002", "No se han podido encontrar tus datos en el banco, revise los datos enviados");
             } else if (err.startsWith("400.0003")) {
                 return new BancoRejectedException("0003", "El número de tarjeta introducido no es correcto, revise los datos enviados");
-            } else if (err.equals("400.0004.Número Cvv no correcto")) {
+            } else if (err.startsWith("400.0004")) {
                 return new BancoRejectedException("0004", "El formato del CVV no es correcto, revise los datos enviados");
-            } else if (err.equals("400.0005.Mes no correcto")) {
+            } else if (err.startsWith("400.0005")) {
                 return new BancoRejectedException("0005", "El mes de caducidad no es correcto, revise los datos enviados");
-            } else if (err.equals("400.0006.Año no correcto")) {
+            } else if (err.startsWith("400.0006")) {
                 return new BancoRejectedException("0006", "El año de caducidad no es correcto, revise los datos enviados");
-            } else if (err.equals("400.0007.Fecha Caducidad no posterior")) {
+            } else if (err.startsWith("400.0007")) {
                 return new BancoRejectedException("0007", "La fecha de caducidad introducida es anterior a hoy, revise los datos enviados");
-            } else if (err.equals("400.0008.Nombre no correcto")) {
+            } else if (err.startsWith("400.0008")) {
                 return new BancoRejectedException("0008", "El nombre introducido no es correcto, revise los datos enviados");
             } else {
                 return new BancoRejectedException("Error desconocido, contacte con los administradores");
