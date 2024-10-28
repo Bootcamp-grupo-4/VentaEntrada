@@ -22,7 +22,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     private static final Logger logger = LoggerFactory.getLogger(CustomGlobalExceptionHandler.class);
 
-    // Manejo de la excepción de el banco rechazando el pago
+    /**
+     * Maneja la excepción `BancoRejectedException`, que ocurre cuando un banco rechaza el pago.
+     * Devuelve una respuesta con un código de estado HTTP 400 (Bad Request), además de información detallada sobre el error.
+     *
+     * @param ex Excepción capturada de tipo `BancoRejectedException`.
+     * @param request Información de la solicitud que originó la excepción.
+     * @return ResponseEntity con los detalles del error, incluyendo timestamp, estado, código de error, mensaje y la ruta que generó la excepción.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BancoRejectedException.class)
     public ResponseEntity<Object> handleBancoRejectedException(BancoRejectedException ex, WebRequest request) {
@@ -38,7 +45,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-    // Manejo de la excepción EventoNotFoundException
+    /**
+     * Maneja la excepción `EventoNotFoundException`, que ocurre cuando un evento solicitado no se encuentra en el sistema.
+     * Devuelve una respuesta con un código de estado HTTP 404 (Not Found) y detalles del error.
+     *
+     * @param ex Excepción capturada de tipo `EventoNotFoundException`.
+     * @param request Información de la solicitud que originó la excepción.
+     * @return ResponseEntity con los detalles del error, incluyendo timestamp, estado, descripción del error, mensaje y la ruta que generó la excepción.
+     */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EventoNotFoundException.class)
     public ResponseEntity<Object> handleEventoNotFound(EventoNotFoundException ex, WebRequest request) {
@@ -54,7 +68,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    // Manejo de la excepción para respuesta 500 del banco
+    /**
+     * Maneja la excepción `InestableBankException`, que ocurre cuando el sistema bancario es inestable o está presentando problemas.
+     * Devuelve una respuesta con un código de estado HTTP 400 (Bad Request) y detalles sobre el error.
+     *
+     * @param ex Excepción capturada de tipo `InestableBankException`.
+     * @param request Información de la solicitud que originó la excepción.
+     * @return ResponseEntity con los detalles del error, incluyendo timestamp, estado, descripción del error, mensaje y la ruta que generó la excepción.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InestableBankException.class)
     public ResponseEntity<Object> handleBancoRejectedException(InestableBankException ex, WebRequest request) {
@@ -70,7 +91,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-    // Manejo de la excepción IllegalArgumentException
+    /**
+     * Maneja la excepción `IllegalArgumentException`, que ocurre cuando se pasa un argumento inválido o incorrecto en una solicitud.
+     * Devuelve una respuesta con un código de estado HTTP 400 (Bad Request) y detalles sobre el error.
+     *
+     * @param ex Excepción capturada de tipo `IllegalArgumentException`.
+     * @param request Información de la solicitud que originó la excepción.
+     * @return ResponseEntity con los detalles del error, incluyendo timestamp, estado, descripción del error, mensaje y la ruta que generó la excepción.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {

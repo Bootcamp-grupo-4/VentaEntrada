@@ -14,6 +14,21 @@ import java.io.InputStream;
 import static feign.FeignException.errorStatus;
 
 public class CustomErrorDecoder implements ErrorDecoder {
+
+    /**
+     * Método que decodifica la respuesta de error de un servicio externo y lanza la excepción apropiada basada en el código de estado HTTP
+     * y el contenido del cuerpo de la respuesta.
+     *
+     * - Si el código de estado es 404, lanza una `EventoNotFoundException` con un mensaje que incluye la URL del evento no encontrado.
+     * - Si el código de estado es 400, intenta leer el cuerpo de la respuesta, que es un objeto `BancoResponse`,
+     *   y genera una excepción personalizada `BancoRejectedException` según el código de error devuelto por el banco.
+     * - Si el código de estado es 500, lanza una `InestableBankException`, indicando problemas de inestabilidad en el servicio del banco.
+     * - Si ningún caso coincide, delega el error al método por defecto `errorStatus`.
+     *
+     * @param methodKey Identificador de la solicitud HTTP, útil para el trazado y depuración.
+     * @param response La respuesta HTTP que contiene el código de estado y el cuerpo del error.
+     * @return Una excepción que será lanzada según el error ocurrido.
+     */
     @Override
     public Exception decode(String methodKey, Response response) {
         BancoResponse resp = null;

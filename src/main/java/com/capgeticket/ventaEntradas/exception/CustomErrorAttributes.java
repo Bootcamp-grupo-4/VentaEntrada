@@ -18,7 +18,21 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
     private static final Logger logger = LoggerFactory.getLogger(CustomErrorAttributes.class);
 
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
+    /**
+     * Sobrescribe el método `getErrorAttributes` para personalizar los atributos de error devueltos en las respuestas de error.
+     * Este método se encarga de modificar y agregar información adicional a los atributos por defecto en caso de que ocurra un error.
+     *
+     * - Se registra un log cuando se personalizan los atributos de error.
+     * - Si el atributo de marca de tiempo ("timestamp") no está presente, se añade el valor actual formateado.
+     * - Si el atributo de marca de tiempo está presente, se reformatea usando el formato "dd/MM/yyyy HH:mm:ss".
+     * - Elimina el atributo "trace" de la respuesta para evitar la exposición innecesaria del rastro de error.
+     * - Añade el atributo "jdk" que contiene la versión de Java que está ejecutando la aplicación.
+     * - Añade un atributo adicional "info_adicional" con un mensaje personalizado de error.
+     *
+     * @param webRequest el objeto de solicitud web que contiene detalles sobre la solicitud que causó el error.
+     * @param options las opciones de error que permiten controlar qué detalles se deben incluir en los atributos de error.
+     * @return un `Map<String, Object>` con los atributos de error personalizados.
+     */
     @Override
     public Map<String, Object> getErrorAttributes(WebRequest webRequest, ErrorAttributeOptions options) {
         logger.info("Personalizando los atributos de error: " + options);
