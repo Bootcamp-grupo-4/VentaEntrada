@@ -35,7 +35,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("message", ex.getMessage());
         body.put("path", request.getDescription(false));
 
-        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     // Manejo de la excepción EventoNotFoundException
@@ -67,7 +67,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("message", ex.getMessage());
         body.put("path", request.getDescription(false));
 
-        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     // Manejo de la excepción IllegalArgumentException
